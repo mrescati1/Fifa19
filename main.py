@@ -135,33 +135,28 @@ test_df.drop('Release Clause', axis= 1, inplace=True)
 val_y= val_df['Release Clause']
 val_df.drop('Release Clause', axis= 1, inplace=True)
 
+train_df.fillna(0, inplace = True)
+test_df.fillna(0, inplace= True)
+
 #Keras Model to analize the data
 model = Sequential()
 model.add(Dense(50, input_dim=50 ))
-model.add(Dense(32, activation= 'tanh'))
-model.add(Dropout(0.7))
-model.add(Dense(24, activation= 'tanh'))
-model.add(Dropout(0.5))
-model.add(Dense(16, activation= 'tanh'))
-model.add(Dense(1, activation='tanh'))
-pippo= optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.001)
+model.add(Dense(64, activation= 'relu'))
+model.add(Dropout(0.3))
+model.add(Dense(32, activation= 'relu'))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation= 'sigmoid'))
+model.add(Dense(16, activation= 'sigmoid'))
+model.add(Dropout(0.2))
+model.add(Dense(1, activation='sigmoid'))
+pippo= optimizers.SGD(lr=0.01, clipnorm=0.1)
 model.compile(optimizer=pippo,
-        loss='mean_squared_error',  metrics=['mae'])
+        loss='poisson')
 print(val_df['Weight'])
 model.fit(train_df, train_y,
                  batch_size=32, epochs=50, verbose=1)
 score = model.predict(test_df)
 test_y= np.array(test_y)
+print(score)
 print(np.mean(abs(score-test_y)))
-# Import the model we are using
-from sklearn.ensemble import RandomForestRegressor
-
-# Instantiate model with 1000 decision trees
-print(train_df)
-train_df = pd.get_dummies(train_df)
-train_y = pd.get_dummies(train_y)
-rf = RandomForestRegressor(n_estimators = 100, random_state = 42)
-
-# Train the model on training data
-rf.fit(train_df, train_y)
 

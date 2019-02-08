@@ -140,10 +140,27 @@ from sklearn.ensemble import RandomForestRegressor
 
 # Instantiate model with 1000 decision trees
 train_df.fillna(0, inplace = True)
+test_df.fillna(0, inplace= True)
 print(train_df[train_df['Stamina'].isnull()])
-train_df = pd.get_dummies(train_df)
-train_y = pd.get_dummies(train_y)
-rf = RandomForestRegressor(n_estimators = 2, random_state = 42, verbose= 1)
+#train_df = pd.get_dummies(train_df)
+#train_y = pd.get_dummies(train_y)
+n_tree= 10
+rf = RandomForestRegressor(n_estimators = n_tree, random_state = 42, verbose= 1)
 
 # Train the model on training data
 rf.fit(train_df, train_y)
+print("Fit executed, waiting for predict")
+prediction = rf.predict(test_df)
+'''
+for i in range(0, len(prediction)):
+    mom=0
+    for j in range(0, 1):
+        mom+= prediction[i][j]
+    mom/= 1
+    pred.append(mom)
+    #pred.append(prediction[i][0])
+'''
+print(prediction)
+#print((pred))
+print(test_y)
+print(np.mean(abs(np.array(prediction)-test_y)/(test_y+0.01)))
